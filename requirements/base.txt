@@ -1,0 +1,6 @@
+alembic==1.8.1
+asyncpg==0.26.0
+fastapi==0.78.0
+pydantic==1.9.1
+SQLAlchemy==1.4.39
+uvicorn==0.18.2
