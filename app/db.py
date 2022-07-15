@@ -10,4 +10,4 @@ from app.config import settings
 
 engine = create_async_engine(settings.SQLALCHEMY_DATABASE_URL, future=True, echo=True)
 
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)  # type: ignore
