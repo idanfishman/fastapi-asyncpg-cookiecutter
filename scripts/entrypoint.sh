@@ -40,4 +40,4 @@ done
 # run migrations
 alembic upgrade head
 
-exec "$@"   
+exec "$@"

@@ -35,7 +35,7 @@ class Settings(BaseSettings):
             scheme="postgresql+asyncpg",
             user=values.get("POSTGRES_USER"),
             password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_HOST"),  # type: ignore
+            host=values.get("POSTGRES_HOST"),
             port=values.get("POSTGRES_PORT"),
             path=f"/{values.get('POSTGRES_DB')}",
         )
@@ -47,4 +47,4 @@ class Settings(BaseSettings):
         case_sensitive = True
 
 
-settings = Settings()  # type: ignore
+settings = Settings()
