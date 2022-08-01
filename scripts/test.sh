@@ -3,4 +3,4 @@
 set -e
 set -x
 
-pytest tests
+pytest tests --asyncio-mode=strict

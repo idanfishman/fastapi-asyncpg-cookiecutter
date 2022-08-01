@@ -15,6 +15,7 @@ services:
       - CORS_CREDENTIALS=True
       - CORS_METHODS=["*"]
       - CORS_HEADERS=["*"]
+      - FASTAPI_ENV=DEV
     ports:
       - 8000:8000
     volumes:

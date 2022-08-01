@@ -1,7 +1,7 @@
-from typing import AsyncGenerator, Generator
-
+import asyncio
 import pytest
-from fastapi.testclient import TestClient
+import pytest_asyncio
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import engine
@@ -9,7 +9,16 @@ from app.deps import get_session
 from app.main import app
 
 
-async def override_get_session() -> AsyncGenerator[AsyncSession, None]:
+@pytest.fixture(scope="session")
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def override_get_session() -> AsyncSession:
     # establish database connection
     connection = await engine.connect()
     # begin a transaction
@@ -23,10 +32,12 @@ async def override_get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-app.dependency_overrides[get_session] = override_get_session
-
-
-@pytest.fixture(scope="module")
-def client() -> Generator:
-    with TestClient(app) as client:
-        yield client
+@pytest_asyncio.fixture(scope="function")
+async def client(override_get_session) -> AsyncClient:
+    app.dependency_overrides[get_session] = lambda: override_get_session
+    async with AsyncClient(
+        app=app,
+        base_url="http://localhost:8000",
+        headers={"Content-Type": "application/json"},
+    ) as _client:
+        yield _client
