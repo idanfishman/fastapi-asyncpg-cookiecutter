@@ -16,10 +16,10 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root():
-    return {"greetings": "Hey you! move to /docs to find out how to use the api"}
+async def root() -> str:
+    return "Howdy!"
 
 
 @app.get("/ping")
-async def ping():
+async def ping() -> dict[str, str]:
     return {"ping": "pong!"}

@@ -3,4 +3,4 @@
 set -e
 set -x
 
-pytest tests --asyncio-mode=strict
+pytest tests --asyncio-mode=strict --log-level=INFO 

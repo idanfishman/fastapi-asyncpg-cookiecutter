@@ -26,18 +26,16 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URL: PostgresDsn | None
 
     @validator("SQLALCHEMY_DATABASE_URL", pre=True)
-    def assemble_db_connection_string(
-        cls, v: PostgresDsn | None, values: dict[str, Any]
-    ) -> Any:
+    def assemble_db_connection_string(cls, v: PostgresDsn | None, values: dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_HOST"),
-            port=values.get("POSTGRES_PORT"),
-            path=f"/{values.get('POSTGRES_DB')}",
+            user=values["POSTGRES_USER"],
+            password=values["POSTGRES_PASSWORD"],
+            host=values["POSTGRES_HOST"],
+            port=values["POSTGRES_PORT"],
+            path=f"/{values['POSTGRES_DB']}",
         )
 
     # Pagination
@@ -47,4 +45,4 @@ class Settings(BaseSettings):
         case_sensitive = True
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
