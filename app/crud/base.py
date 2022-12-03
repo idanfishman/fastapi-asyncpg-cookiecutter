@@ -10,6 +10,8 @@ from typing import Any, Generic, Type, TypeVar, Union
 
 from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
+from fastapi_pagination.bases import AbstractPage, AbstractParams
+from fastapi_pagination.ext.async_sqlalchemy import paginate
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -58,15 +60,13 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def read_many(
         self,
         session: AsyncSession,
-        skip: int = 0,
-        limit: int = settings.PAGE_SIZE,
+        pagination_params: AbstractParams | None = None,
+        order_by: str | None = None,
         **attrs,
-    ) -> list[ModelType]:
-        statement = (
-            select(self.model).filter_by(**attrs).offset(skip).limit(min(limit, settings.PAGE_SIZE))
-        )
-        result = await session.execute(statement=statement)
-        return result.scalars().all()
+    ) -> AbstractPage[ModelType]:
+        statement = select(self.model).filter_by(**attrs).order_by(order_by)
+        result = await paginate(session, statement, pagination_params)
+        return result
 
     async def update(
         self,
